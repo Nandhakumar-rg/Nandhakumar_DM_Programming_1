@@ -104,13 +104,6 @@ class Section1:
         }
 
         # Enter your code and fill the `answer` dictionary
-
-        answer["length_Xtrain"] = len(Xtrain)  # Number of samples
-        answer["length_Xtest"] = len(Xtest)
-        answer["length_ytrain"] = len(ytrain)
-        answer["length_ytest"] = len(ytest)     
-        answer["max_Xtrain"] = np.max(Xtrain)
-        answer["max_Xtest"] = np.max(Xtest)
         return answer, Xtrain, ytrain, Xtest, ytest
 
     """

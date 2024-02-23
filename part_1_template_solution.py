@@ -94,14 +94,14 @@ class Section1:
         Xtrain = nu.scale_data(Xtrain)
         Xtest = nu.scale_data(Xtest)
 
-        answer = {
-            "length_Xtrain": len(Xtrain),
-            "length_Xtest": len(Xtest),
-            "length_ytrain": len(ytrain),
-            "length_ytest": len(ytest),
-            "max_Xtrain": np.max(Xtrain),
-            "max_Xtest": np.max(Xtest),
-        }
+        answer = {}
+
+        answer["length_Xtrain"] = len(Xtrain)
+        answer["length_Xtest"] = len(Xtest)
+        answer["length_ytrain"] = len(ytrain)
+        answer["length_ytest"] = len(ytest)
+        answer["max_Xtrain"] = np.max(Xtrain)
+        answer["max_Xtest"] = np.max(Xtest)
 
         # Enter your code and fill the `answer` dictionary
         return answer, Xtrain, ytrain, Xtest, ytest
@@ -122,21 +122,19 @@ class Section1:
     ):  
         
         # Enter your code and fill the `answer` dictionary
+        answer = {}
+        clf = DecisionTreeClassifier(random_state=42)
+        cv = KFold(n_splits=5, shuffle=True, random_state=42)
+        scores = cross_validate(clf, X, y, cv=cv, return_train_score=False)
 
-        clf = DecisionTreeClassifier(random_state=self.seed)
-        cv = KFold(n_splits=5, shuffle=True, random_state=self.seed)
-        scores = cross_validate(clf, X, y, cv=cv, return_train_score=False, n_jobs=-1)
-
-        answer = {
-            "clf": clf,
-            "cv": cv,
-            "scores": {
-                'mean_fit_time': np.mean(scores['fit_time']),
-                'std_fit_time': np.std(scores['fit_time']),
-                'mean_accuracy': np.mean(scores['test_score']),
-                'std_accuracy': np.std(scores['test_score']),
-            }
-        }
+        mean_fit_time = np.mean(scores['fit_time'])
+        std_fit_time = np.std(scores['fit_time'])
+        mean_accuracy = np.mean(scores['test_score'])
+        std_accuracy = np.std(scores['test_score'])
+        
+        answer["clf"] = clf
+        answer["cv"] = cv
+        answer["scores"] = {'mean_fit_time':mean_fit_time, 'std_fit_time':std_fit_time, 'mean_accuracy':mean_accuracy, 'std_accuracy':std_accuracy}
         return answer
 
     # ---------------------------------------------------------
@@ -150,9 +148,9 @@ class Section1:
         X: NDArray[np.floating],
         y: NDArray[np.int32],
     ):
-        clf = DecisionTreeClassifier(random_state=self.seed)
-        cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
-        scores = cross_validate(clf, X, y, cv=cv, return_train_score=False, n_jobs=-1)
+        clf = DecisionTreeClassifier(random_state=42)
+        cv = ShuffleSplit(n_splits=5, random_state=42)
+        scores = cross_validate(clf, X, y, cv=cv, return_train_score=False)
 
         answer = {
             "clf": clf,
@@ -182,8 +180,8 @@ class Section1:
         answer = {}
 
         for k in ks:
-            cv = ShuffleSplit(n_splits=k, test_size=0.2, random_state=self.seed)
-            scores = cross_validate(DecisionTreeClassifier(random_state=self.seed), X, y, cv=cv, return_train_score=False, n_jobs=-1)
+            cv = ShuffleSplit(n_splits=k, random_state=42)
+            scores = cross_validate(DecisionTreeClassifier(random_state=42), X, y, cv=cv, return_train_score=False)
 
             answer[k] = {
                 'scores': {
@@ -193,7 +191,7 @@ class Section1:
                     'std_accuracy': np.std(scores['test_score']),
                 },
                 'cv': cv,
-                'clf': DecisionTreeClassifier(random_state=self.seed),
+                'clf': DecisionTreeClassifier(random_state=42),
             }
         return answer
 
@@ -217,12 +215,13 @@ class Section1:
         X: NDArray[np.floating],
         y: NDArray[np.int32],
     ) -> dict[str, Any]:
-        clf_RF = RandomForestClassifier(random_state=self.seed)
-        clf_DT = DecisionTreeClassifier(random_state=self.seed)
-        cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
+        
+        clf_RF = RandomForestClassifier(random_state=42)
+        clf_DT = DecisionTreeClassifier(random_state=42)
+        cv = ShuffleSplit(n_splits=5, random_state=42)
 
-        scores_RF = cross_validate(clf_RF, X, y, cv=cv, return_train_score=False, n_jobs=-1)
-        scores_DT = cross_validate(clf_DT, X, y, cv=cv, return_train_score=False, n_jobs=-1)
+        scores_RF = cross_validate(clf_RF, X, y, cv=cv, return_train_score=False)
+        scores_DT = cross_validate(clf_DT, X, y, cv=cv, return_train_score=False)
 
         answer = {
             "clf_RF": clf_RF,
@@ -275,15 +274,15 @@ class Section1:
 
         # Define the parameter grid for hyperparameter tuning
         param_grid = {
-            'n_estimators': [100, 200],
+            'criterion': ['gini', 'entropy'],
             'max_depth': [None, 10, 20],
-            'min_samples_split': [2, 5],
-            'min_samples_leaf': [1, 2],
-            'max_features': ['sqrt', 'log2']
+            'min_samples_split': [2, 5, 10],
+            'min_samples_leaf': [1, 2, 4],
+            'max_features': ['auto', 'sqrt', 'log2']
         }
 
         # Initialize GridSearchCV with the classifier and parameter grid
-        grid_search = GridSearchCV(clf, param_grid, cv=5, scoring='accuracy', n_jobs=-1, verbose=1)
+        grid_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=-1)
         grid_search.fit(X, y)
 
         # Retrieve the best estimator

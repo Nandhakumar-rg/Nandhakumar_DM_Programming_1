@@ -93,7 +93,11 @@ class Section1:
         Xtest, ytest = u.filter_out_7_9s(Xtest, ytest)
         Xtrain = nu.scale_data(Xtrain)
         Xtest = nu.scale_data(Xtest)
+        ytrain = ytrain.astype(int)
+        ytest = ytest.astype(int)
 
+        assert issubclass(ytrain.dtype.type, np.integer), "Training labels are not integers."
+        assert issubclass(ytest.dtype.type, np.integer), "Test labels are not integers."
         answer = {}
 
         answer["length_Xtrain"] = len(Xtrain)
@@ -122,10 +126,11 @@ class Section1:
     ):  
         
         # Enter your code and fill the `answer` dictionary
+        clf = DecisionTreeClassifier(random_state=self.seed)
+        cv = KFold(n_splits=5, shuffle=True, random_state=self.seed)
+        scores = u.train_simple_classifier_with_cv(Xtrain=X, ytrain=y, clf=clf, cv=cv)
         answer = {}
-        clf = DecisionTreeClassifier(random_state=42)
-        cv = KFold(n_splits=5, shuffle=True, random_state=42)
-        scores = cross_validate(clf, X, y, cv=cv, return_train_score=False)
+        
 
         mean_fit_time = np.mean(scores['fit_time'])
         std_fit_time = np.std(scores['fit_time'])
@@ -180,8 +185,9 @@ class Section1:
         answer = {}
 
         for k in ks:
-            cv = ShuffleSplit(n_splits=k, random_state=42)
-            scores = cross_validate(DecisionTreeClassifier(random_state=42), X, y, cv=cv, return_train_score=False)
+            cv = KFold(n_splits=k, shuffle=True, random_state=self.seed)
+            scores = u.train_simple_classifier_with_cv(Xtrain=X, ytrain=y, clf=DecisionTreeClassifier(random_state=self.seed), cv=cv)
+            
 
             answer[k] = {
                 'scores': {
@@ -191,7 +197,7 @@ class Section1:
                     'std_accuracy': np.std(scores['test_score']),
                 },
                 'cv': cv,
-                'clf': DecisionTreeClassifier(random_state=42),
+                'clf': DecisionTreeClassifier(random_state=self.seed),
             }
         return answer
 
@@ -216,9 +222,9 @@ class Section1:
         y: NDArray[np.int32],
     ) -> dict[str, Any]:
         
-        clf_RF = RandomForestClassifier(random_state=42)
-        clf_DT = DecisionTreeClassifier(random_state=42)
-        cv = ShuffleSplit(n_splits=5, random_state=42)
+        clf_RF = RandomForestClassifier(random_state=self.seed)
+        clf_DT = DecisionTreeClassifier(random_state=self.seed)
+        cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
 
         scores_RF = cross_validate(clf_RF, X, y, cv=cv, return_train_score=False)
         scores_DT = cross_validate(clf_DT, X, y, cv=cv, return_train_score=False)

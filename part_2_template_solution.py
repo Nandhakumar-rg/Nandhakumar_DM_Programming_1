@@ -2,13 +2,19 @@
 # Note: only sklearn, numpy, utils and new_utils are allowed.
 
 import numpy as np
-import utils as u
 from numpy.typing import NDArray
 from typing import Any
+import utils as u
+import new_utils as nu
 from sklearn.datasets import fetch_openml
-from sklearn.model_selection import train_test_split, ShuffleSplit, KFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import ShuffleSplit, cross_validate, train_test_split
+from sklearn.model_selection import (
+    ShuffleSplit,
+    cross_validate,
+    KFold,
+)
 
 # ======================================================================
 

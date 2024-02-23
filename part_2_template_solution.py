@@ -2,10 +2,13 @@
 # Note: only sklearn, numpy, utils and new_utils are allowed.
 
 import numpy as np
+import utils as u
 from numpy.typing import NDArray
 from typing import Any
 from sklearn.datasets import fetch_openml
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, ShuffleSplit, KFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 
 # ======================================================================
 
@@ -142,52 +145,126 @@ class Section2:
         ntest_list: list[int] = [],
     ) -> dict[int, dict[str, Any]]:
         """ """
-        # Enter your code and fill the `answer`` dictionary
-        answer = {}
+        
+        train_sizes = [1000, 5000, 10000]
+        test_sizes = [200, 1000, 2000]
+        answers = {}
 
-        """
-        `answer` is a dictionary with the following keys:
-           - 1000, 5000, 10000: each key is the number of training samples
 
-           answer[k] is itself a dictionary with the following keys
-            - "partC": dictionary returned by partC section 1
-            - "partD": dictionary returned by partD section 1
-            - "partF": dictionary returned by partF section 1
-            - "ntrain": number of training samples
-            - "ntest": number of test samples
-            - "class_count_train": number of elements in each class in
-                               the training set (a list, not a numpy array)
-            - "class_count_test": number of elements in each class in
-                               the training set (a list, not a numpy array)
-        """
-        for ntrain in ntrain_list:
-            Xtrain = X[:ntrain, :]
-            ytrain = y[:ntrain]
 
-            class_count_train = [np.sum(ytrain == i) for i in range(10)]
+        for ntrain in train_sizes:
+            answers[ntrain] = {}
+            for ntest in test_sizes:
+                    Xtrain, ytrain = X[:ntrain], y[:ntrain]
+                    Xtest, ytest = X[ntrain:ntrain+ntest], y[ntrain:ntrain+ntest]
 
-            for ntest in ntest_list:
-                Xtest_sub = Xtest[:ntest, :]
-                ytest_sub = ytest[:ntest]
 
-                # Part C
-                partC_result = self.partC(Xtrain, ytrain)
+                    ## PART F
 
-                # Part D
-                partD_result = self.partD(Xtrain, ytrain)
+                    cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
+                    answer_lr = {}
+                    clf_lr = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
+                    logistic_regression_results = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_lr, cv=cv)
+                    lr_scores = {}
 
-                # Part F
-                partF_result = self.partF(Xtrain, ytrain, Xtest_sub, ytest_sub)
+                    mean_accuracy = logistic_regression_results['test_score'].mean()
+                    std_accuracy = logistic_regression_results['test_score'].std()
+                    mean_fit_time = logistic_regression_results['fit_time'].mean()
+                    std_fit_time = logistic_regression_results['fit_time'].std()
 
-                # Storing results in the answer dictionary
-                answer[(ntrain, ntest)] = {
-                    "partC": partC_result,
-                    "partD": partD_result,
-                    "partF": partF_result,
-                    "ntrain": ntrain,
-                    "ntest": ntest,
-                    "class_count_train": class_count_train,
-                    "class_count_test": [np.sum(ytest_sub == i) for i in range(10)],
-                }        
+                    lr_scores['mean_fit_time'] = mean_fit_time
+                    lr_scores['std_fit_time'] = std_fit_time
+                    lr_scores['mean_accuracy'] = mean_accuracy
+                    lr_scores['std_accuracy'] = std_accuracy
+                    answer_lr['clf'] = clf_lr
+                    answer_lr['cv'] = cv
+                    answer_lr['scores'] = lr_scores
 
-        return answer
+                    ## PART C
+                    clf_c = DecisionTreeClassifier(random_state=self.seed)
+                    cv_c = KFold(n_splits=5, shuffle=True, random_state=self.seed)
+                    cv_results = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_c, cv=cv_c)
+                    answer_dt_c = {}
+                    answer_dt_c['clf'] = clf_c
+                    answer_dt_c['cv'] = cv_c
+                    scores_dt_c = {}
+
+
+                    mean_accuracy = cv_results['test_score'].mean()
+                    std_accuracy = cv_results['test_score'].std()
+
+                    mean_fit_time = cv_results['fit_time'].mean()
+                    std_fit_time = cv_results['fit_time'].std()
+
+                    scores_dt_c['mean_fit_time'] = mean_fit_time
+                    scores_dt_c['std_fit_time'] = std_fit_time
+                    scores_dt_c['mean_accuracy'] = mean_accuracy
+                    scores_dt_c['std_accuracy'] = std_accuracy
+
+                    answer_dt_c['scores'] = scores_dt_c
+
+                    ## PART D
+                    clf_d = DecisionTreeClassifier(random_state=self.seed)
+                    cv_d = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
+                    cv_results_d = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_d, cv=cv_d)
+
+                    answer_dt_d = {}
+
+                    answer_dt_d['clf'] = clf_d
+                    answer_dt_d['cv'] = cv_d
+
+                    scores_d = {}
+
+
+
+                    mean_accuracy = cv_results_d['test_score'].mean()
+                    std_accuracy = cv_results_d['test_score'].std()
+
+                    mean_fit_time = cv_results_d['fit_time'].mean()
+                    std_fit_time = cv_results_d['fit_time'].std()
+
+                    scores_d['mean_fit_time'] = mean_fit_time
+                    scores_d['std_fit_time'] = std_fit_time
+                    scores_d['mean_accuracy'] = mean_accuracy
+                    scores_d['std_accuracy'] = std_accuracy
+
+                    answer_dt_d['scores'] = scores_d
+                    answer_dt_d['explain_kfold_vs_shuffle_split'] = """
+                        K-Fold Cross-Validation splits the dataset into k consecutive folds, each fold used once as a test set while the k-1 remaining folds form the training set. It ensures that every observation from the original dataset has the chance of appearing in training and test set. It's well-suited for smaller datasets where maximizing the amount of training data is critical.
+
+                        Shuffle-Split Cross-Validation generates a user-defined number of independent train/test dataset splits. Samples are first shuffled and then split into a pair of train and test sets. It's more flexible than k-fold, allowing for control over the number of iterations and the size of the test sets. It can be more suitable for large datasets or when requiring more randomness in the selection of train/test samples.
+
+                        Pros of Shuffle-Split:
+                        - More control over the size of the test set and the number of resampling iterations.
+                        - Better for large datasets due to its randomness and efficiency.
+
+                        Cons of Shuffle-Split:
+                        - Less systematic coverage of the data compared to k-fold.
+                        - Potential for higher variance in test performance across iterations due to randomness.
+
+                        Empirical advantages:
+                        - Takes less time
+                        - More accuracy
+                    """
+
+
+
+
+
+                    unique, counts_train = np.unique(ytrain, return_counts=True)
+                    class_count_train = dict(zip(unique, counts_train))
+
+                    unique, counts_test = np.unique(ytest, return_counts=True)
+                    class_count_test = dict(zip(unique, counts_test))
+
+                    answers[ntrain][ntest] = {
+                        "partC": answer_dt_c,
+                        "partD": answer_dt_d,
+                        "partF": answer_lr,
+                        "ntrain": ntrain,
+                        "ntest": ntest,
+                        "class_count_train": class_count_train,
+                        "class_count_test": class_count_test,
+                    }
+            return answers
+

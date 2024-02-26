@@ -185,21 +185,27 @@ class Section1:
         answer = {}
 
         for k in ks:
-            cv = KFold(n_splits=k, shuffle=True, random_state=self.seed)
+            cv = ShuffleSplit(n_splits=k, shuffle=True, random_state=self.seed)
             scores = u.train_simple_classifier_with_cv(Xtrain=X, ytrain=y, clf=DecisionTreeClassifier(random_state=self.seed), cv=cv)
             
-
-            answer[k] = {
-                'scores': {
-                    'mean_fit_time': np.mean(scores['fit_time']),
-                    'std_fit_time': np.std(scores['fit_time']),
-                    'mean_accuracy': np.mean(scores['test_score']),
-                    'std_accuracy': np.std(scores['test_score']),
-                },
-                'cv': cv,
-                'clf': DecisionTreeClassifier(random_state=self.seed),
-            }
+            answer = {}
+            answer["cv"] = cv
+            answer["clf"] = DecisionTreeClassifier(random_state=self.seed)
+            scores={}
+            scores['mean_fit_time']=np.mean(scores['fit_time'])
+            scores['std_fit_time']=np.std(scores['fit_time'])
+            scores['mean_accuracy']=np.mean(scores['test_score'])
+            scores['std_accuracy']=np.std(scores['test_score'])
+            answer["scores"] = scores
         return answer
+
+            
+            # Answer: same structure as partC, except for the key 'explain_kfold_vs_shuffle_split'
+            
+              # the estimator (classifier instance)
+              # the cross validator instance
+            # the dictionary with the scores  (a dictionary with
+            # keys: 'mean_fit_time', 'std)_fit_time', 'mean_accuracy', 'std_accuracy'.
 
     # ----------------------------------------------------------------------
     """

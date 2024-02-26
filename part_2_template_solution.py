@@ -98,8 +98,8 @@ class Section2:
         num_classes_test = len(unique_test)
 
         # Print out the number of elements in each class in the training and testing set
-        class_count_train = dict(zip(unique_train, counts_train))
-        class_count_test = dict(zip(unique_test, counts_test))
+        class_count_train = np.bincount(ytrain)
+        class_count_test = np.bincount(ytest)
 
         # Print out the length of Xtrain, Xtest, ytrain, ytest
         length_Xtrain = len(Xtrain)

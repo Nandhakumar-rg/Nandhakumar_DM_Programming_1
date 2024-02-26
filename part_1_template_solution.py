@@ -155,7 +155,7 @@ class Section1:
     ):
         clf = DecisionTreeClassifier(random_state=42)
         cv = ShuffleSplit(n_splits=5, random_state=42)
-        scores = cross_validate(clf, X, y, cv=cv, return_train_score=False)
+        scores = u.train_simple_classifier_with_cv(clf, X, y, cv=cv, return_train_score=False)
 
         answer = {
             "clf": clf,

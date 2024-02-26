@@ -207,7 +207,7 @@ class Section2:
                     scores_dt_c['mean_accuracy'] = mean_accuracy
                     scores_dt_c['std_accuracy'] = std_accuracy
 
-                    answer_dt_c['scores'] = scores_dt_c
+                    answer_dt_c['scores_C'] = scores_dt_c
 
                     ## PART D
                     clf_d = DecisionTreeClassifier(random_state=self.seed)
@@ -234,7 +234,7 @@ class Section2:
                     scores_d['mean_accuracy'] = mean_accuracy
                     scores_d['std_accuracy'] = std_accuracy
 
-                    answer_dt_d['scores'] = scores_d
+                    answer_dt_d['scores_D'] = scores_d
                     answer_dt_d['explain_kfold_vs_shuffle_split'] = """
                         K-Fold Cross-Validation splits the dataset into k consecutive folds, each fold used once as a test set while the k-1 remaining folds form the training set. It ensures that every observation from the original dataset has the chance of appearing in training and test set. It's well-suited for smaller datasets where maximizing the amount of training data is critical.
 

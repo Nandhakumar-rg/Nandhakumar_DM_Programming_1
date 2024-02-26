@@ -11,44 +11,73 @@
      import new_utils as nu
 """
 import numpy as np
+from numpy.typing import NDArray
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+ss=StandardScaler()
+def scale_data(alp):
+  scaled_x=alp.astype('float32')/255.0
+  return scaled_x
 
-def scale_data(X: np.ndarray) -> np.ndarray:
+def scale(alp):
+    if np.max(alp)<=1 and np.min(alp)>=0:
+      return True
+    else:
+      return False
+    
+def checklabels(y):
+    val=np.unique(y)
+    for i in val:
+       if type(i)=='str':
+            return 'String Type'  
+    else:
+        return 'Integers'
+def accuracy(cm):
+   return np.diagonal(cm).sum() / np.sum(cm)
+
+def remove_90_9s(X: NDArray[np.floating], y: NDArray[np.int32]):
     """
-    Scale the data to have floating point values between 0 and 1.
-
-    Args:
-        X (np.ndarray): The input data array to scale.
-
+    Filter the dataset to include only the digits 7 and 9.
+    Parameters:
+        X: Data matrix
+        y: Labels
     Returns:
-        np.ndarray: The scaled data array.
+        Filtered data matrix and labels
+    Notes:
+        np.int32 is a type with a range based on 32-bit ints
+        np.int has no bound; it can hold arbitrarily long numbers
     """
-    # Ensure the data type is float to avoid integer division
-    X = X.astype(np.float64)
+  
+    nine_idx = (y == 9)
+    #print('Ids of nine',nine_idx)
+    X_90 = X[nine_idx, :]
+    y_90 = y[nine_idx]
+    #print(int((X_90.shape[0])*0.1))
+    X_90=X_90[:int((X_90.shape[0])*0.1),:]
+    y_90=y_90[:int((y_90.shape[0])*0.1)]
+    none_nine= (y!=9)
+    X_non_9 = X[none_nine, :]
+    y_non_9 = y[none_nine]
+    fin_X=np.concatenate((X_non_9,X_90),axis=0)
+    fin_y=np.concatenate((y_non_9,y_90),axis=0)
+    return fin_X, fin_y
 
-    # Scale the data to be between 0 and 1
-    X /= 255.0
+def convert_7_0(X: NDArray[np.floating], y: NDArray[np.int32]):
+   id_7=(y==7)
+   id_0=(y==0)
+   y[id_7]=0
+  #  try:
+  #   X[id_7,:]=X[id_0,:]
+  #  except Exception as error:
+  #     print(error)
+   return X,y
 
-    return X
-
-def filter_and_modify_7_9s(X, y):
-    # Filter to keep only 7s and 9s
-    filter_mask = (y == 7) | (y == 9)
-    X_filtered = X[filter_mask]
-    y_filtered = y[filter_mask]
-
-    # Convert labels: 7 -> 0, 9 -> 1
-    y_modified = np.where(y_filtered == 7, 0, 1)
-
-    # Create imbalance by removing 90% of 9s (which are now 1s)
-    mask_9s = (y_modified == 1)
-    indices_to_keep = np.random.choice(np.where(mask_9s)[0], size=int(sum(mask_9s) * 0.1), replace=False)
-
-    mask_to_remove = np.ones(len(y_modified), dtype=bool)
-    mask_to_remove[indices_to_keep] = False
-    mask_to_remove &= mask_9s  # Keep all 0s and the reduced set of 1s
-
-    X_imbalanced = X_filtered[~mask_to_remove]
-    y_imbalanced = y_modified[~mask_to_remove]
-
-    return X_imbalanced, y_imbalanced
-
+def convert_9_1(X: NDArray[np.floating], y: NDArray[np.int32]):
+   id_9=(y==9)
+   id_1=(y==1)
+   y[id_9]=1
+  #  try:
+  #   X[id_7,:]=X[id_0,:]
+  #  except Exception as error:
+  #     print(error)
+   return X,y

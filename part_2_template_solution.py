@@ -165,26 +165,7 @@ class Section2:
                     Xtest, ytest = X[ntrain:ntrain+ntest], y[ntrain:ntrain+ntest]
 
 
-                    ## PART F
-
-                    cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
-                    answer_lr = {}
-                    clf_lr = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
-                    logistic_regression_results = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_lr, cv=cv)
-                    lr_scores = {}
-
-                    mean_accuracy = logistic_regression_results['test_score'].mean()
-                    std_accuracy = logistic_regression_results['test_score'].std()
-                    mean_fit_time = logistic_regression_results['fit_time'].mean()
-                    std_fit_time = logistic_regression_results['fit_time'].std()
-
-                    lr_scores['mean_fit_time'] = mean_fit_time
-                    lr_scores['std_fit_time'] = std_fit_time
-                    lr_scores['mean_accuracy'] = mean_accuracy
-                    lr_scores['std_accuracy'] = std_accuracy
-                    answer_lr['clf'] = clf_lr
-                    answer_lr['cv'] = cv
-                    answer_lr['scores'] = lr_scores
+                    
 
                     ## PART C
                     clf_c = DecisionTreeClassifier(random_state=self.seed)
@@ -252,8 +233,26 @@ class Section2:
                         - Takes less time
                         - More accuracy
                     """
+                    ## PART F
 
+                    cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
+                    answer_lr = {}
+                    clf_lr = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
+                    logistic_regression_results = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_lr, cv=cv)
+                    lr_scores = {}
 
+                    mean_accuracy = logistic_regression_results['test_score'].mean()
+                    std_accuracy = logistic_regression_results['test_score'].std()
+                    mean_fit_time = logistic_regression_results['fit_time'].mean()
+                    std_fit_time = logistic_regression_results['fit_time'].std()
+
+                    lr_scores['mean_fit_time'] = mean_fit_time
+                    lr_scores['std_fit_time'] = std_fit_time
+                    lr_scores['mean_accuracy'] = mean_accuracy
+                    lr_scores['std_accuracy'] = std_accuracy
+                    answer_lr['clf'] = clf_lr
+                    answer_lr['cv'] = cv
+                    answer_lr['scores'] = lr_scores
 
 
 

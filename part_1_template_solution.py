@@ -31,7 +31,7 @@ import new_utils as nu
 
 # ======================================================================
 class Section1:
-    def _init_(
+    def __init__(
         self,
         normalize: bool = True,
         seed: int | None = None,
@@ -48,10 +48,10 @@ class Section1:
         Returns:
             None
 
-        Notes: notice the argument seed. Make sure that any sklearn function that accepts
-        random_state as an argument is initialized with this seed to allow reproducibility.
+        Notes: notice the argument `seed`. Make sure that any sklearn function that accepts
+        `random_state` as an argument is initialized with this seed to allow reproducibility.
         You change the seed ONLY in the section of run_part_1.py, run_part2.py, run_part3.py
-        below if __name__ == "__main__"
+        below `if __name__ == "__main__"`
         """
         self.normalize = normalize
         self.frac_train = frac_train
@@ -62,8 +62,8 @@ class Section1:
     A. We will start by ensuring that your python environment is configured correctly and 
        that you have all the required packages installed. For information about setting up 
        Python please consult the following link: https://www.anaconda.com/products/individual. 
-       To test that your environment is set up correctly, simply execute starter_code in 
-       the utils module. This is done for you. 
+       To test that your environment is set up correctly, simply execute `starter_code` in 
+       the `utils` module. This is done for you. 
     """
 
     def partA(self):
@@ -76,7 +76,7 @@ class Section1:
     B. Load and prepare the mnist dataset, i.e., call the prepare_data and filter_out_7_9s 
        functions in utils.py, to obtain a data matrix X consisting of only the digits 7 and 9. Make sure that 
        every element in the data matrix is a floating point number and scaled between 0 and 1 (write
-       a function def scale() in new_utils.py that returns a bool to achieve this. Checking is not sufficient.) 
+       a function `def scale() in new_utils.py` that returns a bool to achieve this. Checking is not sufficient.) 
        Also check that the labels are integers. Print out the length of the filtered 𝑋 and 𝑦, 
        and the maximum value of 𝑋 for both training and test sets. Use the routines provided in utils.
        When testing your code, I will be using matrices different than the ones you are using to make sure 
@@ -98,7 +98,7 @@ class Section1:
         #print(type(y))
         answer = {}
 
-        # Enter your code and fill the answer dictionary
+        # Enter your code and fill the `answer` dictionary
 
         answer["length_Xtrain"] = len(Xtrain)  # Number of samples
         answer["length_Xtest"] = len(Xtest)
@@ -127,7 +127,7 @@ class Section1:
     ):
         clf=DecisionTreeClassifier(random_state=self.seed)
         cv = KFold(n_splits=5, shuffle=True, random_state=self.seed)
-        # Enter your code and fill the answer dictionary
+        # Enter your code and fill the `answer` dictionary
         results=u.train_simple_classifier_with_cv(clf=clf,Xtrain=X,ytrain=y,cv=cv)
         #print('The shi',results)    
         answer = {}
@@ -155,10 +155,10 @@ class Section1:
         X: NDArray[np.floating],
         y: NDArray[np.int32],
     ):
-        # Enter your code and fill the answer dictionary
+        # Enter your code and fill the `answer` dictionary
         clf=DecisionTreeClassifier(random_state=self.seed)
         cv = ShuffleSplit(n_splits=5, random_state=self.seed)
-        # Enter your code and fill the answer dictionary
+        # Enter your code and fill the `answer` dictionary
         results=u.train_simple_classifier_with_cv(clf=clf,Xtrain=X,ytrain=y,cv=cv)
         
         # Answer: same structure as partC, except for the key 'explain_kfold_vs_shuffle_split'
@@ -190,14 +190,14 @@ class Section1:
         y: NDArray[np.int32],
     ):
                # Answer: built on the structure of partC
-        # answer is a dictionary with keys set to each split, in this case: 2, 5, 8, 16
-        # Therefore, answer[k] is a dictionary with keys: 'scores', 'cv', 'clf`
+        # `answer` is a dictionary with keys set to each split, in this case: 2, 5, 8, 16
+        # Therefore, `answer[k]` is a dictionary with keys: 'scores', 'cv', 'clf`
         k_fold=[2,5,8,16]
         answer_1={}
         for k in k_fold:
             clf=DecisionTreeClassifier(random_state=self.seed)
             cv = ShuffleSplit(n_splits=k, random_state=self.seed)
-            # Enter your code and fill the answer dictionary
+            # Enter your code and fill the `answer` dictionary
             results=u.train_simple_classifier_with_cv(clf=clf,Xtrain=X,ytrain=y,cv=cv)
             
             # Answer: same structure as partC, except for the key 'explain_kfold_vs_shuffle_split'
@@ -220,7 +220,7 @@ class Section1:
  
 #        answer = {}
 
-        # Enter your code, construct the answer dictionary, and return it.
+        # Enter your code, construct the `answer` dictionary, and return it.
         answer=answer_1
         #print(answer)
         return answer
@@ -250,7 +250,7 @@ class Section1:
         clf_dc=DecisionTreeClassifier(random_state=self.seed)
         cv = ShuffleSplit(n_splits=5, random_state=self.seed)
         clf_rf=RandomForestClassifier(random_state=self.seed)
-        # Enter your code and fill the answer dictionary
+        # Enter your code and fill the `answer` dictionary
         results_dc=u.train_simple_classifier_with_cv(clf=clf_dc,Xtrain=X,ytrain=y,cv=cv)
         results_rf=u.train_simple_classifier_with_cv(clf=clf_rf,Xtrain=X,ytrain=y,cv=cv)
         
@@ -282,7 +282,7 @@ class Section1:
         answer["scores_RF"] = scores_rf
         model_hacc=None
         model_lvar=None
-        if scores_rf['std_accuracy']*2>scores_dc['std_accuracy']*2:
+        if scores_rf['std_accuracy']**2>scores_dc['std_accuracy']**2:
             model_lvar=scores_dc['std_accuracy']**2
 
         else:
@@ -304,7 +304,7 @@ class Section1:
         answer['model_highest_accuracy']=model_hacc
         answer['model_lowest_variance']=model_lvar
         answer['model_fastest']=model_fast
-        # Enter your code, construct the answer dictionary, and return it.
+        # Enter your code, construct the `answer` dictionary, and return it.
 
         """
          Answer is a dictionary with the following keys: 
@@ -449,10 +449,10 @@ class Section1:
 # Now, you can print or return the answer dictionary.
 
 
-        # Enter your code, construct the answer dictionary, and return it.
+        # Enter your code, construct the `answer` dictionary, and return it.
 
         """
-           answer` is a dictionary with the following keys: 
+           `answer`` is a dictionary with the following keys: 
             
             "clf", base estimator (classifier model) class instance
             "default_parameters",  dictionary with default parameters 
@@ -480,3 +480,5 @@ class Section1:
         """
         # The mean accuracy of Cross validation is around 65% where as when the model trained on the enitre set, It has an 100% acccuracy, So it is higher than that of the mean accuracy of CV.
         return answer
+
+       

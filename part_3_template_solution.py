@@ -18,7 +18,7 @@ from sklearn.model_selection import StratifiedKFold,cross_val_score,ShuffleSplit
 
 # ======================================================================
 class Section3:
-    def _init_(
+    def __init__(
         self,
         normalize: bool = True,
         frac_train=0.2,
@@ -75,7 +75,7 @@ class Section3:
         NDArray[np.int32],
     ]:
         """ """
-        # Enter code and return the answer` dictionary
+        # Enter code and return the `answer`` dictionary
 
         answer = {}
         clf=LogisticRegression(random_state=self.seed,max_iter=300)
@@ -118,7 +118,7 @@ class Section3:
         #print(answer)
 
         """
-        # answer is a dictionary with the following keys:
+        # `answer` is a dictionary with the following keys:
         - integers for each topk (1,2,3,4,5)
         - "clf" : the classifier
         - "plot_k_vs_score_train" : the plot of k vs. score for the training data, 
@@ -264,7 +264,7 @@ class Section3:
     D. Repeat the same steps as part 3.C but apply a weighted loss function 
     (see the class_weights parameter).  Print out the class weights, and comment on the 
     performance difference. 
-    Use the compute_class_weight argument of the estimator to compute the class weights. 
+    Use the `compute_class_weight` argument of the estimator to compute the class weights. 
     """
 
     def partD(

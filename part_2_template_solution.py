@@ -26,7 +26,7 @@ from sklearn.metrics import accuracy_score
 
 
 class Section2:
-    def _init_(
+    def __init__(
         self,
         normalize: bool = True,
         seed: int | None = None,
@@ -78,9 +78,9 @@ class Section2:
         answer["max_Xtrain"] = np.max(Xtrain)
         answer["max_Xtest"] = np.max(Xtest)
         
-        # Enter your code and fill the answer` dictionary
+        # Enter your code and fill the `answer`` dictionary
 
-        # answer is a dictionary with the following keys:
+        # `answer` is a dictionary with the following keys:
         # - nb_classes_train: number of classes in the training set
         # - nb_classes_test: number of classes in the testing set
         # - class_count_train: number of elements in each class in the training set
@@ -93,7 +93,7 @@ class Section2:
         # - max_Xtest: maximum value in the testing set
 
         # return values:
-        # Xtrain, ytrain, Xtest, ytest: the data used to fill the answer` dictionary
+        # Xtrain, ytrain, Xtest, ytest: the data used to fill the `answer`` dictionary
 
         """Xtrain = Xtest = np.zeros([1, 1], dtype="float")
         ytrain = ytest = np.zeros([1], dtype="int")"""
@@ -208,11 +208,11 @@ class Section2:
             answer[ntrain_list[i]]["ntest"] = ntest_list[i]
             answer[ntrain_list[i]]["class_count_train"] = list(np.bincount(y_train))
             answer[ntrain_list[i]]["class_count_test"] = list(np.bincount(y_test))
-        # Enter your code and fill the answer` dictionary
+        # Enter your code and fill the `answer`` dictionary
        
 
         """
-        answer is a dictionary with the following keys:
+        `answer` is a dictionary with the following keys:
            - 1000, 5000, 10000: each key is the number of training samples
 
            answer[k] is itself a dictionary with the following keys

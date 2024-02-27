@@ -7,6 +7,7 @@ from typing import Any
 import utils as u
 import new_utils as nu
 from sklearn.datasets import fetch_openml
+from sklearn.metrics import confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import ShuffleSplit, cross_validate, train_test_split
@@ -233,43 +234,52 @@ class Section2:
                         - Takes less time
                         - More accuracy
                     """
-                    ## PART F
+            ##Part F
+            partF = {}
+            clf_F = LogisticRegression(max_iter=300,random_state=self.seed)
+            cv_F = ShuffleSplit(n_splits=5,random_state=self.seed)
+            scores_trainlr = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=LogisticRegression(max_iter=300,random_state=self.seed), cv=ShuffleSplit(n_splits=5,random_state=self.seed))
+                       
+                    
+            clf_F.fit(Xtrain,ytrain)
+            y_train_pred = clf_F.predict(Xtrain)
+            y_test_pred = clf_F.predict(Xtest)
+            partF["clf"] =  clf_F
+            confusion_matrix_train = confusion_matrix(ytrain, y_train_pred)
+            confusion_matrix_test = confusion_matrix(ytest,y_test_pred)
+            partF["cv"] = cv_F
+            partF["scores_train_F"] = clf_F.score(Xtrain,ytrain)
+            partF["scores_test_F"] = clf_F.score(Xtest,ytest)
+            partF["mean_cv_accuracy_F"] = np.mean(scores_trainlr['test_score']) 
+            partF["conf_mat_train"] = confusion_matrix_train
+            partF["conf_mat_test"] = confusion_matrix_test
 
-                    cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
-                    answer_lr = {}
-                    clf_lr = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
-                    logistic_regression_results = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_lr, cv=cv)
-                    lr_scores = {}
-
-                    mean_accuracy = logistic_regression_results['test_score'].mean()
-                    std_accuracy = logistic_regression_results['test_score'].std()
-                    mean_fit_time = logistic_regression_results['fit_time'].mean()
-                    std_fit_time = logistic_regression_results['fit_time'].std()
-
-                    lr_scores['mean_fit_time'] = mean_fit_time
-                    lr_scores['std_fit_time'] = std_fit_time
-                    lr_scores['mean_accuracy'] = mean_accuracy
-                    lr_scores['std_accuracy'] = std_accuracy
-                    answer_lr['clf'] = clf_lr
-                    answer_lr['cv'] = cv
-                    answer_lr['scores'] = lr_scores
-
-
-
-                    unique, counts_train = np.unique(ytrain, return_counts=True)
-                    class_count_train = dict(zip(unique, counts_train))
-
-                    unique, counts_test = np.unique(ytest, return_counts=True)
-                    class_count_test = dict(zip(unique, counts_test))
-
-                    answers[ntrain][ntest] = {
+            answers[ntrain][ntest] = {
                         "partC": answer_dt_c,
                         "partD": answer_dt_d,
-                        "partF": answer_lr,
+                        "partF": partF,
                         "ntrain": ntrain,
                         "ntest": ntest,
-                        "class_count_train": class_count_train,
-                        "class_count_test": class_count_test,
+                        "class_count_train": list(np.bincount(ytrain)),
+                        "class_count_test": list(np.bincount(ytest))
                     }
+                # Enter your code and fill the `answer`` dictionary
             return answers
+            
+"""
+        `answer` is a dictionary with the following keys:
+           - 1000, 5000, 10000: each key is the number of training samples
+
+           answer[k] is itself a dictionary with the following keys
+            - "partC": dictionary returned by partC section 1
+            - "partD": dictionary returned by partD section 1
+            - "partF": dictionary returned by partF section 1
+            - "ntrain": number of training samples
+            - "ntest": number of test samples
+            - "class_count_train": number of elements in each class in
+                               the training set (a list, not a numpy array)
+            - "class_count_test": number of elements in each class in
+                               the training set (a list, not a numpy array)
+        """
+            
 
